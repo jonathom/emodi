@@ -16,7 +16,7 @@
 #SBATCH --time=20:00:00
 
 # set name of job
-#SBATCH --job-name=spatial_10xCV_30xsamp
+#SBATCH --job-name=spatial
 
 # mail alert at start, end and abortion of execution
 #SBATCH --mail-type=ALL

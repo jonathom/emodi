@@ -33,6 +33,7 @@ sampled_geodist <- function(x, modeldomain, samples, cvfolds = FALSE, stat = 'ec
   }
   return(gd)
 }
+
 pl <- CAST::plot_geodist(x = pts, modeldomain = rs, stat = "ecdf", cvfolds = fold)
 
 set.seed(1234567)
@@ -44,8 +45,5 @@ saps <- pts[sample(1:nrow(pts), 500),]
 ```
 
 ```{r}
-fg <- CAST::plot_geodist(x = saps, modeldomain = rs, cvfolds = saps$folds, stat = "ecdf")
-gh <- CAST::plot_geodist(x = saps, modeldomain = rs, stat = "ecdf")
-hj <- sampled_geodist(pts, mask, cvfolds = TRUE, samples = 200)
 
 ```

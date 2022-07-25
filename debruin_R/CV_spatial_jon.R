@@ -11,6 +11,8 @@
 library(ranger)
 library(sperrorest, lib.loc="/home/j/j_bahl03/R")
 library(parallel)
+# library(CAST)
+library(caret)
 
 
 # ************ GLOBALS ***************
@@ -19,7 +21,7 @@ samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular",
 infolder <- "~/investigate_spatial_validation/debruin/samples"
 outfolder <- "~/investigate_spatial_validation/debruin/CVresults"
 startseed <- 1234567
-n_CV      <- 10  # number of cross validation replications
+n_CV      <- 5  # number of cross validation replications
 n_samp    <- 30  # # number of sample replicates (for each design)
 cores <- 15
 
@@ -56,34 +58,53 @@ spatialCV <- function(smpl, number, variate, seed){
   f_in <- file.path(infolder,smpl,fname)
   load(f_in)
   
-  if(variate == "AGB"){
-    fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
-    tst <- sperrorest(fo, data=AGBdata, model_fun=ranger, 
-                      model_args=list(respect.unordered.factors=TRUE),
-                      pred_fun=predfun, 
-                      smp_fun=partition_kmeans, coords=c("xcoord", "ycoord"),
-                      smp_args=list(balancing_steps = 1, seed1=seed, 
-                                    repetition=1:n_CV, iter.max = 50), 
-                      err_fun = err_fu)
-  } else{
-    fo <- as.formula(paste0("ocs~", paste(names(OCSdata)[-1], collapse = "+")))
-    tst <- sperrorest(fo, data=OCSdata, model_fun=ranger, 
-                      model_args=list(respect.unordered.factors=TRUE),
-                      pred_fun=predfun, 
-                      smp_fun=partition_kmeans, coords=c("xcoord", "ycoord"),
-                      smp_args=list(balancing_steps = 1, seed1=seed, 
-                                    repetition=1:n_CV, iter.max = 50), 
-                      err_fun = err_fu)
+  RMSEs <- numeric(n_CV)
+  
+  for(i_CV in 1:n_CV) {
+    # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
+    if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
+    flds <- CAST::CreateSpacetimeFolds(samplepoints, spacevar = "ID", k = k)
+    model <- train(AGBdata[,!(names(AGBdata) %in% c("agb"))],
+                   AGBdata$agb,
+                   method="rf",
+                   importance=TRUE,
+                   tuneGrid = expand.grid(mtry=2),
+                   trControl = trainControl(method="cv",
+                                            index=flds$index,
+                                            indexOut=flds$indexOut,
+                                            savePredictions = "final"))
+    
+    RMSEs[i_CV] <- CAST::global_validation(model)["RMSE"][[1]]
   }
+  
+  # if(variate == "AGB"){
+  #   fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
+  #   tst <- sperrorest(fo, data=AGBdata, model_fun=ranger, 
+  #                     model_args=list(respect.unordered.factors=TRUE),
+  #                     pred_fun=predfun, 
+  #                     smp_fun=partition_kmeans, coords=c("xcoord", "ycoord"),
+  #                     smp_args=list(balancing_steps = 1, seed1=seed, 
+  #                                   repetition=1:n_CV, iter.max = 50), 
+  #                     err_fun = err_fu)
+  # } else{
+  #   fo <- as.formula(paste0("ocs~", paste(names(OCSdata)[-1], collapse = "+")))
+  #   tst <- sperrorest(fo, data=OCSdata, model_fun=ranger, 
+  #                     model_args=list(respect.unordered.factors=TRUE),
+  #                     pred_fun=predfun, 
+  #                     smp_fun=partition_kmeans, coords=c("xcoord", "ycoord"),
+  #                     smp_args=list(balancing_steps = 1, seed1=seed, 
+  #                                   repetition=1:n_CV, iter.max = 50), 
+  #                     err_fun = err_fu)
+  # }
 
-  ME   <- tst$error_rep$test_me
-  RMSE <- tst$error_rep$test_rmse
-  MEC  <- tst$error_rep$test_mec
-  rm(tst)
+  #ME   <- tst$error_rep$test_me
+  #RMSE <- tst$error_rep$test_rmse
+  #MEC  <- tst$error_rep$test_mec
+  #rm(tst)
   
   fname <-  paste0(variate, "_", smpl, sprintf("%03d", number), ".Rdata")
   f_out <- file.path(outfolder, "spatial", fname)
-  save(MEC, ME, RMSE, file=f_out)
+  save(RMSEs, file=f_out)
   
 }
 
@@ -92,6 +113,6 @@ spatialCV <- function(smpl, number, variate, seed){
 mclapply(seq(n_samp), function(i) {
   for(smpl in samples) {
     spatialCV(smpl, i, "AGB", startseed)
-    spatialCV(smpl, i, "OCS", startseed)
+    # spatialCV(smpl, i, "OCS", startseed)
   }
 }, mc.cores = cores)
