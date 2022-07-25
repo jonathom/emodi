@@ -61,6 +61,7 @@ randomCV <- function(smpl, number, variate, seed){
   
   n <- length(pts_df$x)
   AGBdata_copy <- AGBdata
+  AGBdata_rows <- nrow(AGBdata)
   
   for(i_CV in 1:n_CV){
     
@@ -73,7 +74,8 @@ randomCV <- function(smpl, number, variate, seed){
     # ************************
     set.seed(seed)
     fold <- sample(rep(1:10, ceiling(n/10)))[1:n]
-    AGBdata_copy$paste0('fold', i_CV) <- fold
+    AGBdata_copy <- cbind(AGBdata_copy, fold)
+    names(AGBdata_copy)[AGBdata_rows + i_CV] <- paste0("fold", i_CV) 
     
     set.seed(seed)
     for(k in 1:10){
