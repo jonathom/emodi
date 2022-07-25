@@ -1,0 +1,311 @@
+---
+title: "Simulation Framework"
+author: "Jonathan Bahlmann"
+date: '2022-07-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 
+
+```{r}
+library(virtualspecies)
+library(caret)
+library(CAST)
+library(viridis)
+library(gridExtra)
+library(knitr)
+library(grid)
+library(latticeExtra)
+library(NNDM)
+library(sf)
+library(ggplot2)
+library(ggpubr)
+source("./sampling_functions.R")
+```
+
+#  What samples are we looking at
+```{r}
+npoints <- 500
+nclusters <- 50
+maxdist <- 2.5
+load("./mask_preds_resp_europe.Rdata")
+random_sample <- make_sample("random", mask, npoints)
+clustered_sample <- make_sample("clustered", mask, npoints, nclusters = nclusters, maxdist = maxdist)
+
+response_df <- as.data.frame(response, xy=TRUE)
+
+rs <- ggplot() + 
+  geom_raster(data=response_df, aes(x=x, y=y, fill=layer)) + 
+  geom_sf(data=random_sample, shape = 1, size = 2) + 
+  theme_light()
+
+cs <- ggplot() + 
+  geom_raster(data=response_df, aes(x=x, y=y, fill=layer)) + 
+  geom_sf(data=clustered_sample, shape = 1, size = 2) + 
+  theme_light()
+
+ggarrange(rs, cs,
+          ncol=2, nrow=1, common.legend = T)
+```
+
+## Autocorrelation
+
+```{r}
+# take a large sample
+stack <- raster::stack(predictors, response)
+stack[[1]][stack[[1]] == 0] <- NA
+s_df <- as.data.frame(stack, xy=T, na.rm=T)
+
+sp_s <- s_df[sample(nrow(s_df), 10000), ]
+
+# generate sample variogram
+coordinates(sp_s) <- ~x+y
+lzn.vgm = gstat::variogram(layer~1, data = sp_s, cutoff = 120, width = 3)
+plot(lzn.vgm$dist, lzn.vgm$gamma, main = "Up To 55°?")
+```
+
+## Next Up: Training a Model, Making a Prediction
+
+```{r, warning=F}
+# function to create folds
+make_folds <- function(samplepoints, k, CVmethod) {
+  
+  if (!"ID" %in% colnames(samplepoints)) {
+    samplepoints$ID <- 1:nrow(samplepoints)
+  }
+  
+  if (CVmethod == "randomKFold") {
+    flds <- createFolds(samplepoints$ID, k = k)
+  }
+  
+  if (CVmethod == "spatialKFold") {
+    flds <- CreateSpacetimeFolds(samplepoints, spacevar = "ID", k = k)
+    # flds <- flds$index
+    
+  }
+  
+  if (CVmethod == "nndm") {
+    pts <- as.data.frame(rasterToPoints(response, xy=T))
+    pts <- st_as_sf(pts, coords=c(1,2))
+    st_crs(pts) <- st_crs(samplepoints)
+    flds <- nndm(tpoints = samplepoints, ppoints = pts, phi = 55, min_train = 0.5)
+    # flds <- flds$indx_train
+  }
+  
+  return(flds)
+}
+
+# error functions from debruin
+
+err_fu <- function(obs, pred){
+  rmse <- sqrt(mean((obs-pred)^2))
+  list(rmse = rmse)
+}
+```
+
+```{r, warning=F}
+df <- data.frame(CVmethod = NA, design = NA, rmse = NA, rmse_val = NA, val2 = NA)
+
+for(i in 1:5) {
+  for(CVmethod in c("randomKFold", "spatialKFold", "nndm")) {
+    for(design in c("random", "clustered")) {
+      
+      samplepoints <- make_sample(design, mask, npoints, nclusters, maxdist)
+      
+      trainDat <- extract(predictors,samplepoints,df=TRUE)
+      trainDat$response <- extract(response,samplepoints)
+      trainDat <- na.omit(trainDat)
+      samplepoints <- samplepoints[trainDat$ID,]
+      
+      flds <- make_folds(samplepoints, 10, CVmethod)
+      
+      # index is used to pass folds, each element of that list is used to train, validate against
+      # all that arenot in that first list
+      # indexOut should be named indexTrain and allows us to pass the indices on which we want to
+      # test, per fold
+      if (CVmethod == "randomKFold") {
+        traincontr <- trainControl(method="cv",index=flds,savePredictions = "final")
+      }
+      if (CVmethod == "spatialKFold") {
+        traincontr <- trainControl(method="cv",index=flds$index,
+                                   indexOut=flds$indexOut,savePredictions = "final")
+      }
+      if (CVmethod == "nndm") {
+        traincontr <- trainControl(method="cv",index=flds$indx_train,
+                                   indexOut=flds$indx_test,savePredictions = "final")
+      }
+      
+      model <- train(trainDat[,names(predictors)],
+               trainDat$response,
+               method="rf",
+               importance=TRUE,
+               tuneGrid = expand.grid(mtry=2),
+               trControl = traincontr)
+      
+      rmse <- global_validation(model)["RMSE"][[1]]
+      
+      # rmse <- model$results$RMSE
+      
+      preds2 <- predict(model, data = trainDat)
+      rmse_val2 <- err_fu(trainDat$response, preds2)["rmse"][[1]]
+      
+      # validation
+      
+      random_sample <- make_sample("random", mask, npoints)
+      random_predictors <- extract(predictors, random_sample, df=TRUE)
+      random_response <- extract(response, random_sample, df=TRUE)
+      # r_df$response <- r_res$layer
+      
+      # train a second model on the current sample
+      model_2 <- train(trainDat[,names(predictors)],
+               trainDat$response,
+               method="rf",
+               importance=TRUE,
+               tuneGrid = expand.grid(mtry=2),
+               trControl = trainControl(method="cv"))
+      
+      # predict on the random sample
+      preds <- predict(model_2, data = random_predictors)
+      
+      rmse_val <- err_fu(random_response$layer, preds)["rmse"][[1]]
+      
+      df <- rbind(df, c(CVmethod, paste(design, maxdist), rmse, rmse_val, rmse_val2))
+      # return(rmse) # RMSE
+      
+    }
+  }
+}
+
+
+# prediction <- predict(predictors,model)
+```
+
+```{r}
+library(ggplot2)
+df$rmse <- as.numeric(df$rmse)
+df$rmse_val <- as.numeric(df$rmse_val)
+df$val2 <- as.numeric(df$val2)
+df$r_rmse <- 100 * (df$rmse - df$rmse_val) / df$rmse_val
+df$r_rmse <- df$rmse - df$val2
+ggplot(data=df[2:nrow(df),], aes(x=design, y=r_rmse, color=CVmethod)) + 
+         geom_boxplot()
+```
+
+## This looks weird so lets try wadoux again
+
+```{r}
+files <- list.files(path = '~/iloek_job/wadoux/investigate_spatial_validation/data/', recursive = FALSE, pattern = "\\.tif$")
+s <- stack(paste0('~/iloek_job/wadoux/investigate_spatial_validation/data/', files))
+s[[1]][s[[1]] ==0] <- NA
+s_df <- as.data.frame(s, xy=T, na.rm=T)
+SampSize <- 100
+source('~/iloek_job/wadoux/investigate_spatial_validation/code/Functions_Spat_CV.R')
+load('~/iloek_job/wadoux/investigate_spatial_validation/code/polygon.Rdata')
+val.dist <- 350
+
+maxdist = 100000
+
+random_sample <- make_sample("random", pp, npoints)
+clustered_sample <- make_sample("clustered", pp, npoints, nclusters = nclusters, maxdist = maxdist)
+
+rs <- ggplot() + 
+  geom_raster(data=s_df, aes(x=x, y=y, fill=ABG1)) + 
+  geom_sf(data=random_sample, shape = 1, size = 2) + 
+  theme_light()
+
+cs <- ggplot() + 
+  geom_raster(data=s_df, aes(x=x, y=y, fill=ABG1)) + 
+  geom_sf(data=clustered_sample, shape = 1, size = 2) + 
+  theme_light()
+
+ggarrange(rs, cs,
+          ncol=2, nrow=1, common.legend = T)
+```
+
+```{r, warning=F}
+predList_modelfull = c("AI_glob","CC_am","Clay","Elev","ETP_Glob","G_mean","NIR_mean","OCS","Prec_am","Prec_Dm","Prec_seaso","Prec_Wm","R_mean","Sand","Sha_EVI","Slope","Soc","solRad_m","SolRad_sd","SWIR1_mean","SWIR2_mean","T_am","T_mdq","T_mwarmq","T_seaso","Terra_PP","Vapor_m","Vapor_sd")
+response.name = "ABG1"
+
+ff <- data.frame(CVmethod = NA, design = NA, rmse = NA, rmse_val = NA)
+
+
+for(i in 1:3) {
+  for(CVmethod in c("randomKFold", "spatialKFold", "nndm")) {
+    for(design in c("random", "clustered")) {
+      
+      samplepoints <- make_sample(design, pp, npoints, nclusters, maxdist)
+      
+      trainDat <- extract(s,samplepoints,df=TRUE)
+      # if("ID" %in% names(trainDat)) {trainDat <- trainDat[,! names(trainDat) %in% c("ID")]}
+      # names(trainDat) <- c("response", names(trainDat)[2:ncol(trainDat)])
+      trainDat <- na.omit(trainDat)
+      samplepoints <- samplepoints[trainDat$ID,]
+      
+      flds <- make_folds(samplepoints, 10, CVmethod)
+      
+      # index is used to pass folds, each element of that list is used to train, validate against
+      # all that arenot in that first list
+      # indexOut should be named indexTrain and allows us to pass the indices on which we want to
+      # test, per fold
+      if (CVmethod == "randomKFold") {
+        traincontr <- trainControl(method="cv",index=flds,savePredictions = "final")
+      }
+      if (CVmethod == "spatialKFold") {
+        traincontr <- trainControl(method="cv",index=flds$index,
+                                   indexOut=flds$indexOut,savePredictions = "final")
+      }
+      if (CVmethod == "nndm") {
+        traincontr <- trainControl(method="cv",index=flds$indx_train,
+                                   indexOut=flds$indx_test,savePredictions = "final")
+      }
+      
+      model <- train(trainDat[,predList_modelfull],
+               trainDat$ABG1,
+               method="rf",
+               importance=TRUE,
+               tuneGrid = expand.grid(mtry=2),
+               trControl = traincontr)
+      
+      rmse <- model$results$RMSE
+      
+      # validation
+      
+      random_sample <- make_sample("random", pp, npoints)
+      random_predictors <- extract(s, random_sample, df=TRUE)
+      random_predictors <- na.omit(random_predictors)
+      # random_response <- extract(response, random_sample, df=TRUE)
+      # r_df$response <- r_res$layer
+      
+      # train a second model on the current sample
+      model_2 <- train(trainDat[,predList_modelfull],
+               trainDat$ABG1,
+               method="rf",
+               importance=TRUE,
+               tuneGrid = expand.grid(mtry=2),
+               trControl = trainControl(method="cv"))
+      
+      # predict on the random sample
+      preds <- predict(model_2, random_predictors)
+      
+      rmse_val <- err_fu(random_predictors$ABG1, preds)["rmse"][[1]]
+
+      ff <- rbind(ff, c(CVmethod, paste(design, maxdist), rmse, rmse_val))
+      # return(rmse) # RMSE
+      
+    }
+  }
+}
+```
+
+```{r}
+library(ggplot2)
+ff$rmse <- as.numeric(ff$rmse)
+ff$rmse_val <- as.numeric(ff$rmse_val)
+ff$r_rmse <- 100 * (ff$rmse - ff$rmse_val) / ff$rmse_val
+ggplot(data=ff[2:nrow(df),], aes(x=design, y=r_rmse, color=CVmethod)) + 
+         geom_boxplot()
+```

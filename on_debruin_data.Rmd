@@ -1,0 +1,51 @@
+---
+title: "EMD on debruin study"
+author: "Jonathan Bahlmann"
+date: '2022-07-25'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+samples_dir <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/samples/"
+out_dir <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/CVresults/"
+
+files <- list.files(file.path(out_dir, "random"))
+load(file.path(out_dir, "random", files[301]))
+
+files_s <- list.files(file.path(samples_dir, "clusterGapped"))
+load(file.path(samples_dir, "clusterGapped", files_s[101]))
+
+load("./mask_preds_resp_europe.Rdata")
+
+sampled_geodist <- function(x, modeldomain, samples, cvfolds = FALSE, stat = 'ecdf') {
+  # x and modeldomain should be sf objects (points), folds should be a column in x
+  sampled_x <- x[sample(1:nrow(x), samples),]
+  sampled_modeldomain <- sf::st_sample(st_as_sf(modeldomain), samples)
+  sampled_modeldomain <- st_transform(sampled_modeldomain, st_crs(x))
+  if(cvfolds) {
+    gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, cvfolds = sampled_x$folds, stat = stat)
+  } else {
+    gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, stat = stat)
+  }
+  return(gd)
+}
+pl <- CAST::plot_geodist(x = pts, modeldomain = rs, stat = "ecdf", cvfolds = fold)
+
+set.seed(1234567)
+fold <- sample(rep(1:10, ceiling(n/10)))[1:n]
+pts_flds <- pts
+pts$folds <- fold
+
+saps <- pts[sample(1:nrow(pts), 500),]
+```
+
+```{r}
+fg <- CAST::plot_geodist(x = saps, modeldomain = rs, cvfolds = saps$folds, stat = "ecdf")
+gh <- CAST::plot_geodist(x = saps, modeldomain = rs, stat = "ecdf")
+hj <- sampled_geodist(pts, mask, cvfolds = TRUE, samples = 200)
+
+```
