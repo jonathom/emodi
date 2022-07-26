@@ -13,7 +13,8 @@ library(sperrorest, lib.loc="/home/j/j_bahl03/R")
 library(parallel)
 # library(CAST)
 library(caret)
-
+source("/home/j/j_bahl03/R/CAST/R/CreateSpacetimeFolds.R")
+source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 
 # ************ GLOBALS ***************
 samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
@@ -62,7 +63,7 @@ spatialCV <- function(smpl, number, variate, seed){
   
   for(i_CV in 1:n_CV) {
     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
-    flds <- CAST::CreateSpacetimeFolds(samplepoints, spacevar = "ID", k = k)
+    flds <- CreateSpacetimeFolds(samplepoints, spacevar = "ID", k = k)
     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
                    AGBdata$agb,
@@ -74,7 +75,7 @@ spatialCV <- function(smpl, number, variate, seed){
                                             indexOut=flds$indexOut,
                                             savePredictions = "final"))
     
-    RMSEs[i_CV] <- CAST::global_validation(model)["RMSE"][[1]]
+    RMSEs[i_CV] <- global_validation(model)["RMSE"][[1]]
   }
   
   # if(variate == "AGB"){
