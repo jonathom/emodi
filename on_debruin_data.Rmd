@@ -45,59 +45,144 @@ saps <- pts[sample(1:nrow(pts), 500),]
 ```
 
 ```{r}
-sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, stat = 'ecdf', showPlot = TRUE) {
+sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, nndm_=TRUE, stat = 'ecdf', showPlot = TRUE) {
   # x and modeldomain should be sf objects (points), folds should be a vector
   row_numbers <- sample(1:nrow(x), samples)
+  row_numbers <- sort(row_numbers)
+  if (!("ID" %in% names(x))) {x$ID <- 1:nrow(x)}
+
   sampled_x <- x[row_numbers,]
   sampled_modeldomain <- sf::st_sample(st_as_sf(modeldomain), samples)
   sampled_modeldomain <- st_transform(sampled_modeldomain, st_crs(x))
   if(!is.na(cvfolds)[1]) {
-    cvfolds <- cvfolds[row_numbers,]
-    gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, cvfolds = cvfolds, stat = stat, showPlot = showPlot)
+    if(!nndm_) {
+      cvfolds <- cvfolds[row_numbers,]
+      gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, cvfolds = cvfolds, stat = stat, showPlot = showPlot)
+    }
+    if(nndm_) {
+      index_in <- cvfolds$indx_train[row_numbers]
+      index_ex <- cvfolds$indx_test[row_numbers]
+      # this works because row_numbers is ordered
+      l <- data.frame(row.names = 1:5000)
+      l[row_numbers,1] <- 1:10
+      
+      index_in <- lapply(index_in, function(x) {
+        x <- l[x[x %in% row_numbers],]
+      })
+      index_ex <- lapply(index_ex, function(x) {
+        x <- l[x[x %in% row_numbers],]
+      })
+
+      gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, cvfolds = index_in, cvtrain = index_ex, stat = stat, showPlot = showPlot)
+    }
+
   } else {
     gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, stat = stat, showPlot = showPlot)
   }
   return(gd)
 }
 
-EMD <- function(geodist) {
+EMD_s2s_s2p <- function(geodist) {
   df <- geodist$distances
-  sasa <- df[df$what=="sample-to-sample",1]
-  sapr <- df[df$what=="sample-to-prediction",1]
-  emdist::emdw(A=sasa, wA=rep(1,length(sasa)), B=sapr, wB=rep(1,length(sapr)), dist = "euclidean")
+  dist1 <- df[df$what=="sample-to-sample",1]
+  dist2 <- df[df$what=="sample-to-prediction",1]
+  emdist::emdw(A=dist1, wA=rep(1,length(dist1)), B=dist2, wB=rep(1,length(dist2)), dist = "euclidean")
+}
+
+EMD_s2s_cv <- function(geodist) {
+  df <- geodist$distances
+  dist1 <- df[df$what=="sample-to-sample",1]
+  dist2 <- df[df$what=="CV-distances",1]
+  emdist::emdw(A=dist1, wA=rep(1,length(dist1)), B=dist2, wB=rep(1,length(dist2)), dist = "euclidean")
+}
+
+EMD_s2p_cv <- function(geodist) {
+  df <- geodist$distances
+  dist1 <- df[df$what=="sample-to-prediction",1]
+  dist2 <- df[df$what=="CV-distances",1]
+  emdist::emdw(A=dist1, wA=rep(1,length(dist1)), B=dist2, wB=rep(1,length(dist2)), dist = "euclidean")
 }
 
 load("./mask_preds_resp_europe.Rdata")
-samples_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/samples/"
+results_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/CVresults"
+samples_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/samples"
 samples <- list.files(samples_root)
 
-df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, EMD=NA)
+df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA, 
+                 s2s_s2p=NA, s2s_cv=NA, s2p_cv=NA)
+
 for (method in list.files("./CVresults")) {
   out_files <- list.files(file.path("./CVresults", method), glob2rx("AGB_*.Rdata"))
   copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
   for (smpl in samples) {
     for (iteration in 1:5){ # 1:length(out_files)) {
-      result_file <- file.path("./CVresults", method, out_files[iteration])
-      copy_file <- file.path("./CVresults", method, copy_files[iteration])
-      load(result_file)
-      load(copy_file)
+      filename <- paste0("AGB_", smpl, sprintf("%03d", iteration), ".Rdata")
+      copyname <- paste0("AGBcopyAGB_", smpl, sprintf("%03d", iteration), ".Rdata")
+      result_file <- file.path("./CVresults", method, filename)
+      copy_file <- file.path("./CVresults", method, copyname)
+      exhaustive_file <- file.path(results_root, "exhaustive", filename)
+      nndm_file <- file.path("./CVresults", method, paste0("nndm", filename))
+      sample_file <- file.path(samples_root, smpl, paste0("AGBdata", sprintf("%03d", iteration), ".Rdata"))
+
+      load(exhaustive_file) # this loads "RMSE"
+      RMSE_val <- RMSE
+      
+      if (!file.exists(result_file)) next
+        
+      load(result_file) # this loads and overwrites RMSE
       if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
       
-      AGBdata <- st_as_sf(AGBdata_copy, coords=c("xcoord", "ycoord"))
-      st_crs(AGBdata) <- st_crs('+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
-      mask <- st_transform(st_as_sf(mask), st_crs(AGBdata))
-      print(paste(method, smpl, iteration))
-      
-      EMDs <- numeric(5)
-      for (i in 1:5) {
-        fold_name <- paste0("fold", i)
-        folds <- st_drop_geometry(AGBdata[,names(AGBdata) %in% fold_name])
-        gd <- sampled_geodist(x = AGBdata, modeldomain = mask, cvfolds = folds, stat='ecdf', samples = 50)
-        EMDs[i] <- EMD(gd)
+      if (method == "random") {
+        load(copy_file)
+        
+        AGBdata <- st_as_sf(AGBdata_copy, coords=c("xcoord", "ycoord"))
+        st_crs(AGBdata) <- st_crs('+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 
+                                  +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 
+                                  +units=m +no_defs')
+        mask <- st_transform(st_as_sf(mask), st_crs(AGBdata))
+        
+        s2s_s2p <- numeric(5)
+        s2s_cv <- numeric(5)
+        s2p_cv <- numeric(5)
+        for (i in 1:5) {
+          fold_name <- paste0("fold", i)
+          folds <- st_drop_geometry(AGBdata[,names(AGBdata) %in% fold_name])
+          gd <- sampled_geodist(x = AGBdata, modeldomain = mask, cvfolds = folds, 
+                                stat='ecdf', samples = 50, showPlot = FALSE, nndm_ = FALSE)
+          s2s_s2p[i] <- EMD_s2s_s2p(gd)
+          s2s_cv[i] <- EMD_s2s_cv(gd)
+          s2p_cv[i] <- EMD_s2p_cv(gd)
+        }
+        
+        s2s_s2p <- mean(s2s_s2p)
+        s2s_cv <- mean(s2s_cv)
+        s2p_cv <- mean(s2p_cv)
       }
       
-      emd <- mean(EMDs)
-      df <- rbind(df, c(method, smpl, iteration, RMSE, emd))
+      if (method == "nndm") {
+        # in nndm, we only do 1 CV iteration, not 5
+        if(file.exists(nndm_file)) {
+          load(nndm_file)
+          load(sample_file)
+          AGBdata <- st_as_sf(AGBdata, coords = c("xcoord", "ycoord"), 
+                              crs = st_crs('+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 
+                              +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 
+                              +units=m +no_defs'))
+          mask <- st_transform(st_as_sf(mask), st_crs(AGBdata))
+        
+          gd <- sampled_geodist(x = AGBdata, modeldomain = mask, cvfolds = nndm, nndm_ = TRUE,
+                              stat='ecdf', samples = 50, showPlot = FALSE)
+          s2s_s2p <- EMD_s2s_s2p(gd)
+          s2s_cv <- EMD_s2s_cv(gd)
+          s2p_cv <- EMD_s2p_cv(gd)
+        }
+
+      }
+
+      print(paste(method, smpl, iteration))
+      
+
+      df <- rbind(df, c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv))
 
       
     }
@@ -107,7 +192,60 @@ for (method in list.files("./CVresults")) {
 
 ```{r}
 library(ggplot2)
-df$EMD <- as.numeric(df$EMD)
-ggplot(data=df, aes(x=sample, y=EMD)) +
+df <- df[2:nrow(df),]
+df$RMSE <- as.numeric(df$RMSE)
+df$RMSE_val <- as.numeric(df$RMSE_val)
+df$s2s_cv <- as.numeric(df$s2s_cv)
+df$s2s_s2p <- as.numeric(df$s2s_s2p)
+df$s2p_cv <- as.numeric(df$s2p_cv)
+df$r_RMSE <- 100 * (df$RMSE - df$RMSE_val) / df$RMSE_val
+
+df$sample[df$sample == "clusterGapped"] <- "e_clusterGapped"
+df$sample[df$sample == "simpleRandom"] <- "a_simpleRandom"
+df$sample[df$sample == "regular"] <- "b_regular"
+df$sample[df$sample == "clusterMedium"] <- "c_clusterMedium"
+df$sample[df$sample == "clusterStrong"] <- "d_clusterStrong"
+```
+
+```{r}
+ggplot(data=df, aes(x=method, y=r_RMSE, color=sample)) +
   geom_boxplot()
+
+ggplot(data=df, aes(x=method, y=s2s_cv, color=sample)) +
+  geom_boxplot()
+ggplot(data=df, aes(x=method, y=s2s_s2p, color=sample)) +
+  geom_boxplot()
+ggplot(data=df, aes(x=method, y=s2p_cv, color=sample)) +
+  geom_boxplot()
+
+```
+
+```{r}
+gh <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA)
+
+for (method in list.files("./CVresults")) {
+  out_files <- list.files(file.path("./CVresults", method), glob2rx("AGB_*.Rdata"))
+  copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
+  for (smpl in samples) {
+    for (iteration in 1:5){ # 1:length(out_files)) {
+      filename <- paste0("AGB_", smpl, sprintf("%03d", iteration), ".Rdata")
+      copyname <- paste0("AGBcopyAGB_", smpl, sprintf("%03d", iteration), ".Rdata")
+      result_file <- file.path("./CVresults", method, filename)
+      copy_file <- file.path("./CVresults", method, copyname)
+      exhaustive_file <- file.path(results_root, "exhaustive", filename)
+
+      load(exhaustive_file) # this loads "RMSE"
+      RMSE_val <- RMSE
+      
+      load(result_file) # this loads and overwrites RMSE
+      load(copy_file)
+      if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
+      
+
+      gh <- rbind(gh, c(method, smpl, iteration, RMSE, RMSE_val))
+
+      
+    }
+  }
+}
 ```

@@ -7,6 +7,9 @@
 # May 3, 2022
 # *****************************************************************************
 
+# sleep for random time so multiple jobs dont take the same job out of the csv
+Sys.sleep(round(runif(1, min = 1, max = 240)))
+
 # ****** load required library *******
 library(ranger)
 # library(NNDM)
@@ -17,30 +20,39 @@ library(caret)
 library(parallel)
 
 # ************ GLOBALS ***************
-samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
-               "simpleRandom")
-
 infolder <- "~/investigate_spatial_validation/debruin/samples"
-outfolder <- "~/investigate_spatial_validation/debruin/CVresults"
+outfolder <- "~/emodi/CVresults"
+# outfolder <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/CVresults"
 datafolder <- "~/investigate_spatial_validation/debruin/data"
-startseed <- 1234567
-n_CV   <- 3  # number of cross validation replications
-n_samp <- 30  # number of sample replicates (for each design)
-# 20000 phi and 0.5 min train
-# samples <- "clusterMedium"
-# variate <- "AGB"
-# setwd("/home/petra/iloek_job/wadoux/investigate_spatial_validation/debruin/R")
-n <- 5000 # usually 5000
-cores <- 15
+folder_name <- "nndm_single"
 
+csv_file <- file.path(outfolder, folder_name, "nndm_processing.csv")
+runs <- read.csv(csv_file)
+i <- 0
+found <- FALSE
+while (found == FALSE && i < 301) {
+  i <- i+1
+  row <- runs[i,]
+  if (row$job == 0) {
+    # print(paste(row, i))
+    row$job <- 1
+    runs[i,] <- row
+    found <- TRUE
+  }
+}
+
+write.csv(runs, file = csv_file, row.names = FALSE)
+
+# 20000 phi and 0.5 min train
+n <- 1000 # usually 5000
+n_CV <- 3
 
 # create outfolders if they don't exist
 if(!dir.exists(outfolder))
   dir.create(outfolder)
 
-if(!dir.exists(paste0(outfolder, "/nndm")))
-  dir.create(paste0(outfolder, "/nndm"))
-
+if(!dir.exists(paste0(outfolder, folder_name)))
+  dir.create(paste0(outfolder, folder_name))
 
 # ************ FUNCTIONS ***************
 
@@ -61,7 +73,7 @@ err_fu <- function(obs, pred){
   list(me = me, rmse = rmse, mec = mec)
 }
 
-nndmCV <- function(smpl, number, variate, seed) {
+nndmCV <- function(smpl, number, variate) {
   
   fname <- paste0(variate, "data", sprintf("%03d", number), ".Rdata")
   f_in <- file.path(infolder,smpl,fname)
@@ -80,9 +92,9 @@ nndmCV <- function(smpl, number, variate, seed) {
   }
   
   agb_raster <- raster::raster(file.path(datafolder, "agb.tif")) # load agb raster
-
-  for(i_CV in 1:n_CV) {
   
+  for(i_CV in 1:n_CV) {
+    
     raster_subset <- sampleRandom(agb_raster, n, sp=T) # subset raster
     raster_sf <- st_as_sf(raster_subset) # as sf
     sample_subset <- st_cast(st_sample(sample_sf, n), to = "POINT") # subset sample
@@ -116,34 +128,14 @@ nndmCV <- function(smpl, number, variate, seed) {
     RMSE[i_CV] <- err_fu(refs, preds)["rmse"][[1]]
     MEC[i_CV] <- err_fu(refs, preds)["mec"][[1]]
   }
-
+  
   fname  <-  paste0(variate, "_", smpl, sprintf("%03d", number), ".Rdata")
-  # fname2 <-  paste0("pts", variate, "_", smpl, sprintf("%03d", number), ".Rdata")
-  f_out  <- file.path(outfolder,"nndm", fname)
-  # f_out2 <- file.path(outfolder,"nndm", fname2)
+  fname2 <-  paste0("nndm", variate, "_", smpl, sprintf("%03d", number), ".Rdata")
+  f_out  <- file.path(outfolder,folder_name, fname)
+  f_out2 <- file.path(outfolder,folder_name, fname2)
   save(MEC, RMSE, file=f_out)
-  # save(pts_df, file=f_out2)
+  save(nndm, file=f_out2)
 }
 
 # ************ CALL THE FUNCTIONS ************ 
-l <- list()
-x <- 1
-for (i in seq(n_samp)) {
-  for (smpl in samples) {
-    for (var in c("AGB", "OCS")) {
-      l[[x]] <- list(smpl, i, var)
-      x <- x + 1
-    }
-  }
-}
-
-mclapply(l, function(le) {
-  nndmCV(le[[1]], le[[2]], le[[3]], startseed)
-}, mc.cores=cores)
-
-# mclapply(seq(n_samp), function(i) {
-#   for(smpl in samples) {
-#     nndmCV(smpl, i, "AGB", startseed)
-#     nndmCV(smpl, i, "OCS", startseed)
-#   }
-# }, mc.cores = cores)
+nndmCV(smpl = row$sample, number = row$i_samp, variate = row$variate)
