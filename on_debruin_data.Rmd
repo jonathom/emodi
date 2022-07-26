@@ -45,28 +45,69 @@ saps <- pts[sample(1:nrow(pts), 500),]
 ```
 
 ```{r}
+sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, stat = 'ecdf', showPlot = TRUE) {
+  # x and modeldomain should be sf objects (points), folds should be a vector
+  row_numbers <- sample(1:nrow(x), samples)
+  sampled_x <- x[row_numbers,]
+  sampled_modeldomain <- sf::st_sample(st_as_sf(modeldomain), samples)
+  sampled_modeldomain <- st_transform(sampled_modeldomain, st_crs(x))
+  if(!is.na(cvfolds)[1]) {
+    cvfolds <- cvfolds[row_numbers,]
+    gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, cvfolds = cvfolds, stat = stat, showPlot = showPlot)
+  } else {
+    gd <- CAST::plot_geodist(x = sampled_x, modeldomain = sampled_modeldomain, stat = stat, showPlot = showPlot)
+  }
+  return(gd)
+}
+
+EMD <- function(geodist) {
+  df <- geodist$distances
+  sasa <- df[df$what=="sample-to-sample",1]
+  sapr <- df[df$what=="sample-to-prediction",1]
+  emdist::emdw(A=sasa, wA=rep(1,length(sasa)), B=sapr, wB=rep(1,length(sapr)), dist = "euclidean")
+}
+
 load("./mask_preds_resp_europe.Rdata")
 samples_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/samples/"
 samples <- list.files(samples_root)
 
-df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, exhaustive=NA)
+df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, EMD=NA)
 for (method in list.files("./CVresults")) {
   out_files <- list.files(file.path("./CVresults", method), glob2rx("AGB_*.Rdata"))
   copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
   for (smpl in samples) {
-    for (iteration in 1:length(out_files)) {
+    for (iteration in 1:5){ # 1:length(out_files)) {
       result_file <- file.path("./CVresults", method, out_files[iteration])
       copy_file <- file.path("./CVresults", method, copy_files[iteration])
       load(result_file)
       load(copy_file)
       if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
-      df[iteration,] <- c(method, smpl, iteration, RMSE, NA)
+      
       AGBdata <- st_as_sf(AGBdata_copy, coords=c("xcoord", "ycoord"))
       st_crs(AGBdata) <- st_crs('+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
       mask <- st_transform(st_as_sf(mask), st_crs(AGBdata))
       print(paste(method, smpl, iteration))
-      gd <- CAST::plot_geodist(x = AGBdata, modeldomain = mask, stat='ecdf') 
+      
+      EMDs <- numeric(5)
+      for (i in 1:5) {
+        fold_name <- paste0("fold", i)
+        folds <- st_drop_geometry(AGBdata[,names(AGBdata) %in% fold_name])
+        gd <- sampled_geodist(x = AGBdata, modeldomain = mask, cvfolds = folds, stat='ecdf', samples = 50)
+        EMDs[i] <- EMD(gd)
+      }
+      
+      emd <- mean(EMDs)
+      df <- rbind(df, c(method, smpl, iteration, RMSE, emd))
+
+      
     }
   }
 }
+```
+
+```{r}
+library(ggplot2)
+df$EMD <- as.numeric(df$EMD)
+ggplot(data=df, aes(x=sample, y=EMD)) +
+  geom_boxplot()
 ```

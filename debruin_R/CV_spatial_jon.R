@@ -63,6 +63,7 @@ spatialCV <- function(smpl, number, variate, seed){
   
   for(i_CV in 1:n_CV) {
     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
+    if (!("ID" %in% names(AGBdata))) {AGBdata$ID <- 1:nrow(AGBdata)}
     flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
