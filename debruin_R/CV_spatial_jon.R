@@ -9,7 +9,7 @@
 
 # ****** load required libraries *******
 library(ranger)
-library(sperrorest, lib.loc="/home/j/j_bahl03/R")
+# library(sperrorest, lib.loc="/home/j/j_bahl03/R")
 library(parallel)
 # library(CAST)
 library(caret)
@@ -63,7 +63,7 @@ spatialCV <- function(smpl, number, variate, seed){
   
   for(i_CV in 1:n_CV) {
     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
-    flds <- CreateSpacetimeFolds(samplepoints, spacevar = "ID", k = k)
+    flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
                    AGBdata$agb,

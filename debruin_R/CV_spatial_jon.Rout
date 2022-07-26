@@ -28,13 +28,14 @@ Type 'q()' to quit R.
 > 
 > # ****** load required libraries *******
 > library(ranger)
-> library(sperrorest, lib.loc="/home/j/j_bahl03/R")
+> # library(sperrorest, lib.loc="/home/j/j_bahl03/R")
 > library(parallel)
 > # library(CAST)
 > library(caret)
 Loading required package: lattice
 Loading required package: ggplot2
-> 
+> source("/home/j/j_bahl03/R/CAST/R/CreateSpacetimeFolds.R")
+> source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 > 
 > # ************ GLOBALS ***************
 > samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
@@ -83,9 +84,9 @@ Loading required package: ggplot2
 +   
 +   for(i_CV in 1:n_CV) {
 +     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
-+     if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
-+     flds <- CAST::CreateSpacetimeFolds(samplepoints, spacevar = "ID", k = k)
-+     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb"))],
++     flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
++     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
++     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
 +                    AGBdata$agb,
 +                    method="rf",
 +                    importance=TRUE,
@@ -95,7 +96,7 @@ Loading required package: ggplot2
 +                                             indexOut=flds$indexOut,
 +                                             savePredictions = "final"))
 +     
-+     RMSEs[i_CV] <- CAST::global_validation(model)["RMSE"][[1]]
++     RMSEs[i_CV] <- global_validation(model)["RMSE"][[1]]
 +   }
 +   
 +   # if(variate == "AGB"){
@@ -138,214 +139,214 @@ Loading required package: ggplot2
 +   }
 + }, mc.cores = cores)
 [[1]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[2]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[3]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[4]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[5]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[6]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[7]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[8]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[9]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[10]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[11]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[12]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[13]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[14]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[15]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[16]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[17]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[18]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[19]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[20]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[21]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[22]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[23]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[24]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[25]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[26]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[27]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[28]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[29]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 [[30]]
-[1] "Error in loadNamespace(name) : there is no package called ‘CAST’\n"
+[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<packageNotFoundError in loadNamespace(name): there is no package called ‘CAST’>
+<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
 
 Warning message:
 In mclapply(seq(n_samp), function(i) { :
@@ -353,4 +354,4 @@ In mclapply(seq(n_samp), function(i) { :
 > 
 > proc.time()
    user  system elapsed 
-  3.275   0.963  16.362 
+  2.315   0.702   3.348 
