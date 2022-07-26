@@ -45,5 +45,28 @@ saps <- pts[sample(1:nrow(pts), 500),]
 ```
 
 ```{r}
+load("./mask_preds_resp_europe.Rdata")
+samples_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/samples/"
+samples <- list.files(samples_root)
 
+df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, exhaustive=NA)
+for (method in list.files("./CVresults")) {
+  out_files <- list.files(file.path("./CVresults", method), glob2rx("AGB_*.Rdata"))
+  copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
+  for (smpl in samples) {
+    for (iteration in 1:length(out_files)) {
+      result_file <- file.path("./CVresults", method, out_files[iteration])
+      copy_file <- file.path("./CVresults", method, copy_files[iteration])
+      load(result_file)
+      load(copy_file)
+      if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
+      df[iteration,] <- c(method, smpl, iteration, RMSE, NA)
+      AGBdata <- st_as_sf(AGBdata_copy, coords=c("xcoord", "ycoord"))
+      st_crs(AGBdata) <- st_crs('+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
+      mask <- st_transform(st_as_sf(mask), st_crs(AGBdata))
+      print(paste(method, smpl, iteration))
+      gd <- CAST::plot_geodist(x = AGBdata, modeldomain = mask, stat='ecdf') 
+    }
+  }
+}
 ```
