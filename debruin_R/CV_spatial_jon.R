@@ -22,7 +22,7 @@ samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular",
 infolder <- "~/investigate_spatial_validation/debruin/samples"
 outfolder <- "~/emodi/CVresults"
 startseed <- 1234567
-n_CV      <- 5  # number of cross validation replications
+n_CV      <- 3  # number of cross validation replications
 n_samp    <- 30  # # number of sample replicates (for each design)
 cores <- 15
 
@@ -59,7 +59,8 @@ spatialCV <- function(smpl, number, variate, seed){
   f_in <- file.path(infolder,smpl,fname)
   load(f_in)
   
-  RMSEs <- numeric(n_CV)
+  RMSE <- numeric(n_CV)
+  folds <- list()
   
   for(i_CV in 1:n_CV) {
     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
@@ -76,7 +77,8 @@ spatialCV <- function(smpl, number, variate, seed){
                                             indexOut=flds$indexOut,
                                             savePredictions = "final"))
     
-    RMSEs[i_CV] <- global_validation(model)["RMSE"][[1]]
+    RMSE[i_CV] <- global_validation(model)["RMSE"][[1]]
+    folds <- append(folds, flds)
   }
   
   # if(variate == "AGB"){
@@ -106,7 +108,7 @@ spatialCV <- function(smpl, number, variate, seed){
   
   fname <-  paste0(variate, "_", smpl, sprintf("%03d", number), ".Rdata")
   f_out <- file.path(outfolder, "spatial", fname)
-  save(RMSEs, file=f_out)
+  save(RMSE, folds, file=f_out)
   
 }
 

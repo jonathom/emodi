@@ -10,13 +10,13 @@
 #SBATCH --mem=100GB
 
 # set a partition
-#SBATCH --partition express
+#SBATCH --partition normal
 
 # set max wallclock time
-#SBATCH --time=01:30:00
+#SBATCH --time=12:00:00
 
 # set name of job
-#SBATCH --job-name=spatial
+#SBATCH --job-name=spatial_emodi
 
 # mail alert at start, end and abortion of execution
 #SBATCH --mail-type=ALL

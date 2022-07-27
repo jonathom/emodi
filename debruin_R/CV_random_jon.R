@@ -18,7 +18,7 @@ samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular",
 infolder <- "~/investigate_spatial_validation/debruin/samples"
 outfolder <- "~/emodi/CVresults"
 startseed <- 1234567
-n_CV   <- 5  # number of cross validation replications
+n_CV   <- 3  # number of cross validation replications
 n_samp <- 30  # number of sample replicates (for each design)
 cores <- 15
 

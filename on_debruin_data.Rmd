@@ -132,6 +132,9 @@ for (method in list.files("./CVresults")) {
       load(result_file) # this loads and overwrites RMSE
       if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
       
+      df <- rbind(df, c(method, smpl, iteration, RMSE, RMSE_val, 0, 0, 0))
+      next
+      
       if (method == "random") {
         load(copy_file)
         
