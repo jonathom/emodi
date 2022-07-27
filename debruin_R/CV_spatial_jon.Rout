@@ -41,7 +41,7 @@ Loading required package: ggplot2
 > samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
 +                "simpleRandom")
 > infolder <- "~/investigate_spatial_validation/debruin/samples"
-> outfolder <- "~/investigate_spatial_validation/debruin/CVresults"
+> outfolder <- "~/emodi/CVresults"
 > startseed <- 1234567
 > n_CV      <- 5  # number of cross validation replications
 > n_samp    <- 30  # # number of sample replicates (for each design)
@@ -84,6 +84,7 @@ Loading required package: ggplot2
 +   
 +   for(i_CV in 1:n_CV) {
 +     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
++     if (!("ID" %in% names(AGBdata))) {AGBdata$ID <- 1:nrow(AGBdata)}
 +     flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
 +     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
 +     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
@@ -139,219 +140,96 @@ Loading required package: ggplot2
 +   }
 + }, mc.cores = cores)
 [[1]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[2]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[3]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[4]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[5]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[6]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[7]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[8]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[9]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[10]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[11]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[12]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[13]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[14]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[15]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[16]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[17]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[18]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[19]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[20]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[21]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[22]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[23]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[24]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[25]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[26]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[27]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[28]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[29]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
 [[30]]
-[1] "Error in `[.data.frame`(x, , spacevar) : undefined columns selected\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in `[.data.frame`(x, , spacevar): undefined columns selected>
+NULL
 
-Warning message:
-In mclapply(seq(n_samp), function(i) { :
-  all scheduled cores encountered errors in user code
 > 
 > proc.time()
-   user  system elapsed 
-  2.315   0.702   3.348 
+      user     system    elapsed 
+122393.899    361.174   8963.822 
