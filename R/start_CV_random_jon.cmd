@@ -4,25 +4,25 @@
 #SBATCH --nodes=1
 
 # set the number of CPU cores per node
-#SBATCH --ntasks-per-node 1
+#SBATCH --ntasks-per-node 10
 
 # How much memory is needed (per node)
-#SBATCH --mem=15GB
+#SBATCH --mem=100GB
 
 # set a partition
 #SBATCH --partition normal
 
 # set max wallclock time
-#SBATCH --time=90:00:00
+#SBATCH --time=20:00:00
 
 # set name of job
-#SBATCH --job-name=nndm_2ndwave
+#SBATCH --job-name=random_emodi
 
 # mail alert at start, end and abortion of execution
 #SBATCH --mail-type=ALL
 
 # set an output file
-#SBATCH --output output_nndm_single_.dat
+#SBATCH --output output_random.dat
 
 # send mail to this address
 #SBATCH --mail-user=jbahlmann@uni-muenster.de
@@ -30,4 +30,4 @@
 # run the application
 module add palma/2020b
 module add foss R GDAL
-R CMD BATCH --vanilla CV_nndm_single.R
+R CMD BATCH --vanilla CV_random_flds.R

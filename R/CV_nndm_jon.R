@@ -18,13 +18,14 @@ library(sf)
 library(raster)
 library(caret)
 library(parallel)
+source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 
 # ************ GLOBALS ***************
 infolder <- "~/investigate_spatial_validation/debruin/samples"
 outfolder <- "~/emodi/CVresults"
 # outfolder <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/CVresults"
 datafolder <- "~/investigate_spatial_validation/debruin/data"
-folder_name <- "nndm_single"
+folder_name <- "nndm"
 
 csv_file <- file.path(outfolder, folder_name, "nndm_processing.csv")
 runs <- read.csv(csv_file)
@@ -44,7 +45,7 @@ while (found == FALSE && i < 301) {
 write.csv(runs, file = csv_file, row.names = FALSE)
 
 # 20000 phi and 0.5 min train
-n <- 1000 # usually 5000
+n <- 700 # usually 5000
 n_CV <- 3
 
 # create outfolders if they don't exist
@@ -79,7 +80,6 @@ nndmCV <- function(smpl, number, variate) {
   f_in <- file.path(infolder,smpl,fname)
   load(f_in)
   
-  MEC  <- numeric(n_CV)
   RMSE <- numeric(n_CV)
   
   # load sample file containing coordinates
@@ -92,6 +92,8 @@ nndmCV <- function(smpl, number, variate) {
   }
   
   agb_raster <- raster::raster(file.path(datafolder, "agb.tif")) # load agb raster
+  
+  folds <- list()
   
   for(i_CV in 1:n_CV) {
     
@@ -122,19 +124,14 @@ nndmCV <- function(smpl, number, variate) {
                       tuneGrid = paramGrid, 
                       data = training_data)
     
-    refs <- mod_NNDM$pred$obs
-    preds <- mod_NNDM$pred$pred
+    RMSE[i_CV] <- global_validation(mod_NNDM)["RMSE"][[1]]
+    folds <- append(folds, nndm)
     
-    RMSE[i_CV] <- err_fu(refs, preds)["rmse"][[1]]
-    MEC[i_CV] <- err_fu(refs, preds)["mec"][[1]]
   }
   
   fname  <-  paste0(variate, "_", smpl, sprintf("%03d", number), ".Rdata")
-  fname2 <-  paste0("nndm", variate, "_", smpl, sprintf("%03d", number), ".Rdata")
   f_out  <- file.path(outfolder,folder_name, fname)
-  f_out2 <- file.path(outfolder,folder_name, fname2)
-  save(MEC, RMSE, file=f_out)
-  save(nndm, file=f_out2)
+  save(RMSE, folds, file=f_out)
 }
 
 # ************ CALL THE FUNCTIONS ************ 

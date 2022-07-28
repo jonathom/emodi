@@ -19,12 +19,13 @@ source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 # ************ GLOBALS ***************
 samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
                "simpleRandom")
-infolder <- "~/investigate_spatial_validation/debruin/samples"
+infolder <- "~/deBruin_add_nndm/samples"
+# infolder <- ("../../deBruin_add_nndm/samples")
 outfolder <- "~/emodi/CVresults"
 startseed <- 1234567
 n_CV      <- 3  # number of cross validation replications
-n_samp    <- 30  # # number of sample replicates (for each design)
-cores <- 15
+n_samp    <- 100  # # number of sample replicates (for each design)
+cores <- 10
 
 # create outfolders if they don't exist
 if(!dir.exists(outfolder))
@@ -64,10 +65,35 @@ spatialCV <- function(smpl, number, variate, seed){
   
   for(i_CV in 1:n_CV) {
     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
-    if (!("ID" %in% names(AGBdata))) {AGBdata$ID <- 1:nrow(AGBdata)}
-    flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
+    # if (!("ID" %in% names(AGBdata))) {AGBdata$ID <- 1:nrow(AGBdata)}
+    # flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
-    model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
+    
+    # find out autocorrelation ######################
+    # stack1 <- raster::raster("~/iloek_job/wadoux/investigate_spatial_validation/debruin/data/agb.tif")
+    # s_df <- raster::as.data.frame(stack1, xy=T, na.rm=T)
+    # sp_s <- s_df[sample(nrow(s_df), 10000), ]
+    # coordinates(sp_s) <- ~x+y
+    # lzn.vgm = gstat::variogram(agb~1, data = sp_s, cutoff = 700000)
+    # plot(lzn.vgm$dist, lzn.vgm$gamma)
+    # -> 500000 # pixelsize 500m, -> 1000 pixels autocorrelation
+    #################################################
+    
+    # wadoux spatial CV
+    # mdist <- dist(AGBdata[c("xcoord","ycoord")])
+    # hc <- hclust(mdist, method="complete")
+    # d = 1000  # the maximum distance between pixels within clusters (val.dist m * 1000 m = val.dist km)                   
+    # AGBdata$Clust_val.distkm = cutree(hc, h=d) 
+    
+    # try with coords
+    load(file.path(infolder, smpl, sprintf("%03d", number), "_coords.Rdata"))
+    mdist2 <- dist(st_coordinates(pts))
+    hc2 <- hclust(mdist2, method="complete")
+    AGBdata$Clust_val.distkm = cutree(hc2, h=500000)
+
+    flds <- CreateSpacetimeFolds(AGBdata, spacevar = "Clust_val.distkm")
+    
+    model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID", "Clust_val.distkm"))],
                    AGBdata$agb,
                    method="rf",
                    importance=TRUE,
