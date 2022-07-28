@@ -16,7 +16,7 @@ source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
                "simpleRandom")
 
-infolder <- "~/investigate_spatial_validation/debruin/samples"
+infolder <- "~/deBruin_add_nndm/samples"
 outfolder <- "~/emodi/CVresults"
 startseed <- 1234567
 n_CV   <- 3  # number of cross validation replications

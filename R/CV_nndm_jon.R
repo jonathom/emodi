@@ -21,7 +21,7 @@ library(parallel)
 source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 
 # ************ GLOBALS ***************
-infolder <- "~/investigate_spatial_validation/debruin/samples"
+infolder <- "~/deBruin_add_nndm/samples"
 outfolder <- "~/emodi/CVresults"
 # outfolder <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/CVresults"
 datafolder <- "~/investigate_spatial_validation/debruin/data"
