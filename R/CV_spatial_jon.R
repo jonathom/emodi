@@ -13,6 +13,7 @@ library(ranger)
 library(parallel)
 # library(CAST)
 library(caret)
+library(sf)
 source("/home/j/j_bahl03/R/CAST/R/CreateSpacetimeFolds.R")
 source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 
@@ -86,10 +87,16 @@ spatialCV <- function(smpl, number, variate, seed){
     # AGBdata$Clust_val.distkm = cutree(hc, h=d) 
     
     # try with coords
-    load(file.path(infolder, smpl, sprintf("%03d", number), "_coords.Rdata"))
+    load(file.path(infolder, smpl, paste0(sprintf("%03d", number), "_coords.Rdata")))
+    
+    if(class(pts)[1] != "sf") {
+      pts <- as.data.frame(pts)
+      pts <- st_as_sf(pts, coords = c("x", "y"))
+    }
+    
     mdist2 <- dist(st_coordinates(pts))
     hc2 <- hclust(mdist2, method="complete")
-    AGBdata$Clust_val.distkm = cutree(hc2, h=500000)
+    AGBdata$Clust_val.distkm = cutree(hc2, h=500000) # tune this, leads to many folds!
 
     flds <- CreateSpacetimeFolds(AGBdata, spacevar = "Clust_val.distkm")
     
