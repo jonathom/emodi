@@ -4,10 +4,10 @@
 #SBATCH --nodes=1
 
 # set the number of CPU cores per node
-#SBATCH --ntasks-per-node 15
+#SBATCH --ntasks-per-node 20
 
 # How much memory is needed (per node)
-#SBATCH --mem=50GB
+#SBATCH --mem=140GB
 
 # set a partition
 #SBATCH --partition normal
@@ -30,4 +30,4 @@
 # run the application
 module add palma/2020b
 module add foss R GDAL
-R CMD BATCH --vanilla CV_nndm_jon.R
+R CMD BATCH --vanilla CV_nndm_parallel.R
