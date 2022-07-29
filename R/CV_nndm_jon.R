@@ -114,8 +114,11 @@ nndmCV <- function(smpl, number, variate) {
     
     paramGrid <-  data.frame(mtry = 2, min.node.size = 5, splitrule = "variance")
     
-    if (variate == "AGB") {training_data <- AGBdata; rf_form <- agb~.}
-    else {training_data <- OCSdata; rf_form <- ocs~.}
+    if (variate == "AGB") {
+      training_data <- AGBdata; rf_form <- agb~.
+    } else {
+      training_data <- OCSdata; rf_form <- ocs~.
+    }
     
     # next: execute this and see where it goes from there
     mod_NNDM <- train(rf_form,
