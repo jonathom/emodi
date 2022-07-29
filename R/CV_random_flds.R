@@ -10,6 +10,7 @@
 # ****** load required library *******
 library(ranger)
 library(parallel)
+library(caret)
 source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 
 # ************ GLOBALS ***************

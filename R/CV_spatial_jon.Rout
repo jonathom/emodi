@@ -40,12 +40,13 @@ Loading required package: ggplot2
 > # ************ GLOBALS ***************
 > samples   <- c("clusterMedium", "clusterStrong", "clusterGapped", "regular", 
 +                "simpleRandom")
-> infolder <- "~/investigate_spatial_validation/debruin/samples"
+> infolder <- "~/deBruin_add_nndm/samples"
+> # infolder <- ("../../deBruin_add_nndm/samples")
 > outfolder <- "~/emodi/CVresults"
 > startseed <- 1234567
 > n_CV      <- 3  # number of cross validation replications
-> n_samp    <- 30  # # number of sample replicates (for each design)
-> cores <- 15
+> n_samp    <- 100  # # number of sample replicates (for each design)
+> cores <- 10
 > 
 > # create outfolders if they don't exist
 > if(!dir.exists(outfolder))
@@ -85,10 +86,35 @@ Loading required package: ggplot2
 +   
 +   for(i_CV in 1:n_CV) {
 +     # fo <- as.formula(paste0("agb~", paste(names(AGBdata)[-1], collapse = "+")))
-+     if (!("ID" %in% names(AGBdata))) {AGBdata$ID <- 1:nrow(AGBdata)}
-+     flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
++     # if (!("ID" %in% names(AGBdata))) {AGBdata$ID <- 1:nrow(AGBdata)}
++     # flds <- CreateSpacetimeFolds(AGBdata, spacevar = "ID", k = 10)
 +     # if ("ID" %in% names(AGBdata)) {AGBdata <- AGBdata[,!(names(AGBdata) %in% c("ID"))]}
-+     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID"))],
++     
++     # find out autocorrelation ######################
++     # stack1 <- raster::raster("~/iloek_job/wadoux/investigate_spatial_validation/debruin/data/agb.tif")
++     # s_df <- raster::as.data.frame(stack1, xy=T, na.rm=T)
++     # sp_s <- s_df[sample(nrow(s_df), 10000), ]
++     # coordinates(sp_s) <- ~x+y
++     # lzn.vgm = gstat::variogram(agb~1, data = sp_s, cutoff = 700000)
++     # plot(lzn.vgm$dist, lzn.vgm$gamma)
++     # -> 500000 # pixelsize 500m, -> 1000 pixels autocorrelation
++     #################################################
++     
++     # wadoux spatial CV
++     # mdist <- dist(AGBdata[c("xcoord","ycoord")])
++     # hc <- hclust(mdist, method="complete")
++     # d = 1000  # the maximum distance between pixels within clusters (val.dist m * 1000 m = val.dist km)                   
++     # AGBdata$Clust_val.distkm = cutree(hc, h=d) 
++     
++     # try with coords
++     load(file.path(infolder, smpl, sprintf("%03d", number), "_coords.Rdata"))
++     mdist2 <- dist(st_coordinates(pts))
++     hc2 <- hclust(mdist2, method="complete")
++     AGBdata$Clust_val.distkm = cutree(hc2, h=500000)
++ 
++     flds <- CreateSpacetimeFolds(AGBdata, spacevar = "Clust_val.distkm")
++     
++     model <- train(AGBdata[,!(names(AGBdata) %in% c("agb", "ID", "Clust_val.distkm"))],
 +                    AGBdata$agb,
 +                    method="rf",
 +                    importance=TRUE,
@@ -142,96 +168,709 @@ Loading required package: ggplot2
 +   }
 + }, mc.cores = cores)
 [[1]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[2]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[3]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[4]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[5]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[6]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[7]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[8]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[9]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[10]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[11]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[12]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[13]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[14]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[15]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[16]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[17]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[18]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[19]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[20]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[21]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[22]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[23]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[24]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[25]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[26]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[27]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[28]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[29]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
 [[30]]
-NULL
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
 
+[[31]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[32]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[33]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[34]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[35]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[36]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[37]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[38]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[39]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[40]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[41]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[42]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[43]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[44]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[45]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[46]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[47]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[48]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[49]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[50]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[51]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[52]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[53]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[54]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[55]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[56]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[57]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[58]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[59]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[60]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[61]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[62]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[63]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[64]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[65]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[66]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[67]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[68]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[69]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[70]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[71]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[72]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[73]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[74]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[75]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[76]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[77]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[78]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[79]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[80]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[81]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[82]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[83]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[84]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[85]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[86]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[87]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[88]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[89]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[90]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[91]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[92]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[93]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[94]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[95]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[96]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[97]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[98]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[99]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+[[100]]
+[1] "Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection\n"
+attr(,"class")
+[1] "try-error"
+attr(,"condition")
+<simpleError in readChar(con, 5L, useBytes = TRUE): cannot open the connection>
+
+Warning message:
+In mclapply(seq(n_samp), function(i) { :
+  all scheduled cores encountered errors in user code
 > 
 > proc.time()
-     user    system   elapsed 
-81383.328   218.807  5940.926 
+   user  system elapsed 
+  2.880   0.866  16.059 
