@@ -29,6 +29,9 @@ Type 'q()' to quit R.
 > # ****** load required library *******
 > library(ranger)
 > library(parallel)
+> library(caret)
+Loading required package: lattice
+Loading required package: ggplot2
 > source("/home/j/j_bahl03/R/CAST/R/global_validation.R")
 > 
 > # ************ GLOBALS ***************
@@ -112,709 +115,306 @@ Type 'q()' to quit R.
 +   }
 + }, mc.cores = cores)
 [[1]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[2]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[3]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[4]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[5]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[6]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[7]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[8]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[9]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[10]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[11]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[12]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[13]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[14]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[15]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[16]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[17]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[18]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[19]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[20]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[21]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[22]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[23]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[24]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[25]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[26]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[27]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[28]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[29]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[30]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[31]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[32]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[33]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[34]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[35]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[36]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[37]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[38]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[39]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[40]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[41]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[42]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[43]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[44]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[45]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[46]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[47]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[48]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[49]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[50]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[51]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[52]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[53]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[54]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[55]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[56]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[57]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[58]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[59]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[60]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[61]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[62]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[63]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[64]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[65]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[66]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[67]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[68]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[69]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[70]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[71]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[72]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[73]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[74]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[75]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[76]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[77]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[78]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[79]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[80]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[81]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[82]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[83]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[84]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[85]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[86]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[87]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[88]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[89]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[90]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[91]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[92]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[93]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[94]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[95]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[96]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[97]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[98]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[99]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
 [[100]]
-[1] "Error in createFolds(AGBdata$agb, k = 10) : \n  could not find function \"createFolds\"\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<simpleError in createFolds(AGBdata$agb, k = 10): could not find function "createFolds">
+NULL
 
-Warning message:
-In mclapply(seq(n_samp), function(i) { :
-  all scheduled cores encountered errors in user code
 > 
 > proc.time()
-   user  system elapsed 
-  1.476   0.635   5.018 
+    user   system  elapsed 
+3583.494   34.403  425.268 

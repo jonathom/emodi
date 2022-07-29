@@ -137,8 +137,11 @@ Loading required package: ggplot2
 +     
 +     paramGrid <-  data.frame(mtry = 2, min.node.size = 5, splitrule = "variance")
 +     
-+     if (variate == "AGB") {training_data <- AGBdata; rf_form <- agb~.}
-+     else {training_data <- OCSdata; rf_form <- ocs~.}
++     if (variate == "AGB") {
++       training_data <- AGBdata; rf_form <- agb~.
++     } else {
++       training_data <- OCSdata; rf_form <- ocs~.
++     }
 +     
 +     # next: execute this and see where it goes from there
 +     mod_NNDM <- train(rf_form,
@@ -171,4 +174,4 @@ Warning messages:
 > 
 > proc.time()
     user   system  elapsed 
-1051.397   47.373  402.567 
+1169.760   40.392  395.749 
