@@ -104,8 +104,8 @@ EMD_s2p_cv <- function(geodist) {
 }
 
 load("./mask_preds_resp_europe.Rdata")
-results_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/CVresults"
-samples_root <- "~/iloek_job/wadoux/investigate_spatial_validation/debruin/samples"
+results_root <- "~/iloek_job/wadoux/deBruin_add_nndm/debruin/CVresults"
+samples_root <- "~/iloek_job/wadoux/deBruin_add_nndm/debruin/samples"
 samples <- list.files(samples_root)
 
 df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA, 
@@ -113,13 +113,13 @@ df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA,
 
 for (method in list.files("./CVresults")) {
   out_files <- list.files(file.path("./CVresults", method), glob2rx("AGB_*.Rdata"))
-  copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
+  # copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
   for (smpl in samples) {
     for (iteration in 1:3){ # 1:length(out_files)) {
       filename <- paste0("AGB_", smpl, sprintf("%03d", iteration), ".Rdata")
-      copyname <- paste0("AGBcopyAGB_", smpl, sprintf("%03d", iteration), ".Rdata")
+      # copyname <- paste0("AGBcopyAGB_", smpl, sprintf("%03d", iteration), ".Rdata")
       result_file <- file.path("./CVresults", method, filename)
-      copy_file <- file.path("./CVresults", method, copyname)
+      # copy_file <- file.path("./CVresults", method, copyname)
       exhaustive_file <- file.path(results_root, "exhaustive", filename)
       nndm_file <- file.path("./CVresults", method, paste0("nndm", filename))
       sample_file <- file.path(samples_root, smpl, paste0("AGBdata", sprintf("%03d", iteration), ".Rdata"))

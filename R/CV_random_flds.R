@@ -54,12 +54,12 @@ randomCV <- function(smpl, number, variate, seed){
   
   MEC  <- numeric(n_CV)
   RMSE <- numeric(n_CV)
+  folds <- list()
   
   for(i_CV in 1:n_CV){
     
     SSR <- 0
     SST <- 0
-    folds <- list()
     
     # ************************
     # ****** 10 fold CV ******
@@ -82,7 +82,7 @@ randomCV <- function(smpl, number, variate, seed){
   
   fname  <-  paste0(variate, "_", smpl, sprintf("%03d", number), ".Rdata")
   f_out  <- file.path(outfolder,"random", fname)
-  save(RMSE, flds, file=f_out)
+  save(RMSE, folds, file=f_out)
 }
 
 
