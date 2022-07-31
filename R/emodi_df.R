@@ -1,9 +1,12 @@
+.libPaths("/home/j/j_bahl03/R")
 library(sf)
 library(parallel)
 library(dplyr)
+library(ggplot2)
+library(emdist)
 source("~/emodi/R/plot_geodist_oldpipe.R")
 
-sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, cv_method=TRUE, stat = 'ecdf', showPlot = TRUE) {
+sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, cv_method=TRUE, stat = 'density', showPlot = TRUE) {
   # x and modeldomain should be sf objects (points), folds should be a vector
   row_numbers <- sample(1:nrow(x), samples)
   row_numbers <- sort(row_numbers)
@@ -120,7 +123,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
       flds_i <- list("idx_train" = idx_train, "idx_test" = idx_test)
     }
     gd <- sampled_geodist(x = pts_sf, modeldomain = mask, cvfolds = flds_i, 
-                          stat='ecdf', samples = 50, showPlot = FALSE, cv_method = method)
+                          stat='density', samples = 50, showPlot = FALSE, cv_method = method)
     s2s_s2p[i] <- EMD_s2s_s2p(gd)
     s2s_cv[i] <- EMD_s2s_cv(gd)
     s2p_cv[i] <- EMD_s2p_cv(gd)
@@ -142,7 +145,7 @@ do_list <- list()
 x <- 1
 for (method in list.files(file.path(root_path, "CVresults"))) {
   for (smpl in samples) {
-    for (iteration in 1:1) {
+    for (iteration in 1:100) {
       do_list[[x]] <- list("method" = method, "smpl" = smpl, "iteration" = iteration)
       x <- x+1
     }
@@ -153,7 +156,9 @@ all_rows <- mclapply(do_list, function(el) {
   geodist_per_sample(el$method, el$smpl, el$iteration)
 }, mc.cores = 20)
 
+# geodist_per_sample("spatial", "regular", 1)
+
 df_ <- as.data.frame(do.call(rbind,all_rows))
-names(df_) <- c(method, sample, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
+names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")
 out_file <- file.path("~/emodi/result_df.Rdata")
 save(df_, file = out_file)
