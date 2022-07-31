@@ -1,6 +1,7 @@
 library(sf)
 library(parallel)
-source("~/R/CAST/R/plot_geodist.R")
+library(dplyr)
+source("~/emodi/R/plot_geodist_oldpipe.R")
 
 sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, cv_method=TRUE, stat = 'ecdf', showPlot = TRUE) {
   # x and modeldomain should be sf objects (points), folds should be a vector
