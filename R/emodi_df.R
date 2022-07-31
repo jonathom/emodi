@@ -61,7 +61,7 @@ EMD_s2p_cv <- function(geodist) {
 }
 
 root_path <- "~/emodi"
-load("./mask_preds_resp_europe.Rdata")
+load(file.path(root_path, "/mask_preds_resp_europe.Rdata"))
 # results_root <- "~/iloek_job/wadoux/deBruin_add_nndm/CVresults"
 # samples_root <- "~/iloek_job/wadoux/deBruin_add_nndm/samples"
 results_root <- "~/deBruin_add_nndm/CVresults"
@@ -76,7 +76,6 @@ geodist_per_sample <- function(method, smpl, iteration) {
   result_file <- file.path(root_path, "CVresults", method, filename)
   coords_file <- file.path(samples_root, smpl, coordsname)
   exhaustive_file <- file.path(results_root, "exhaustive", filename)
-  # nndm_file <- file.path("./CVresults", method, paste0("nndm", filename))
   sample_file <- file.path(samples_root, smpl, paste0("AGBdata", sprintf("%03d", iteration), ".Rdata"))
   
   load(exhaustive_file) # this loads "RMSE"
