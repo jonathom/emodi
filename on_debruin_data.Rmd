@@ -187,8 +187,12 @@ for (method in list.files("./CVresults")) {
 ```
 
 ```{r}
+load("./result_df.Rdata")
+df <- df_
+```
+
+```{r}
 library(ggplot2)
-df <- df[2:nrow(df),]
 df$RMSE <- as.numeric(df$RMSE)
 df$RMSE_val <- as.numeric(df$RMSE_val)
 df$s2s_cv <- as.numeric(df$s2s_cv)
@@ -211,42 +215,14 @@ ggplot(data=df, aes(x=method, y=r_RMSE, color=sample)) +
 ggplot(data=df, aes(x=method, y=s2s_s2p, color=sample)) +
   geom_boxplot()
 
-ggplot(data=df, aes(x=r_RMSE, y=s2s_cv)) +
+ggplot(data=df, aes(x=r_RMSE, y=s2s_cv, color=method)) +
   geom_point()
-ggplot(data=df, aes(x=r_RMSE, y=s2s_s2p)) +
+ggplot(data=df, aes(x=r_RMSE, y=s2s_s2p, color=method)) +
   geom_point()
-ggplot(data=df, aes(x=r_RMSE, y=s2p_cv)) +
+ggplot(data=df, aes(x=r_RMSE, y=s2p_cv, color=method)) +
+  geom_point()
+ggplot(data=df, aes(x=r_RMSE, y=s2p_cv, color=sample)) +
   geom_point()
 
 
-```
-
-```{r}
-gh <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA)
-
-for (method in list.files("./CVresults")) {
-  out_files <- list.files(file.path("./CVresults", method), glob2rx("AGB_*.Rdata"))
-  copy_files <- list.files(file.path("./CVresults", method), glob2rx("AGBcopyAGB_*.Rdata"))
-  for (smpl in samples) {
-    for (iteration in 1:5){ # 1:length(out_files)) {
-      filename <- paste0("AGB_", smpl, sprintf("%03d", iteration), ".Rdata")
-      copyname <- paste0("AGBcopyAGB_", smpl, sprintf("%03d", iteration), ".Rdata")
-      result_file <- file.path("./CVresults", method, filename)
-      copy_file <- file.path("./CVresults", method, copyname)
-      exhaustive_file <- file.path(results_root, "exhaustive", filename)
-
-      load(exhaustive_file) # this loads "RMSE"
-      RMSE_val <- RMSE
-      
-      load(result_file) # this loads and overwrites RMSE
-      load(copy_file)
-      if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
-      
-
-      gh <- rbind(gh, c(method, smpl, iteration, RMSE, RMSE_val))
-
-      
-    }
-  }
-}
 ```

@@ -133,6 +133,9 @@ geodist_per_sample <- function(method, smpl, iteration) {
   s2s_cv <- mean(s2s_cv)
   s2p_cv <- mean(s2p_cv)
   
+  res <- c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
+  fname <- paste0(method,"_",smpl,"_",iteration,".Rdata")
+  save(res, file=paste0("~/emodi/CVresults/gd/", fname))
   return(c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv))
 }
 

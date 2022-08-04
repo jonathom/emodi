@@ -13,10 +13,10 @@
 #SBATCH --partition normal
 
 # set max wallclock time
-#SBATCH --time=90:00:00
+#SBATCH --time=200:00:00
 
 # set name of job
-#SBATCH --job-name=compile_results
+#SBATCH --job-name=compile_results200
 
 # mail alert at start, end and abortion of execution
 #SBATCH --mail-type=ALL
