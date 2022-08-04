@@ -123,7 +123,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
       flds_i <- list("idx_train" = idx_train, "idx_test" = idx_test)
     }
     gd <- sampled_geodist(x = pts_sf, modeldomain = mask, cvfolds = flds_i, 
-                          stat='density', samples = 50, showPlot = FALSE, cv_method = method)
+                          stat='density', samples = 200, showPlot = FALSE, cv_method = method)
     s2s_s2p[i] <- EMD_s2s_s2p(gd)
     s2s_cv[i] <- EMD_s2s_cv(gd)
     s2p_cv[i] <- EMD_s2p_cv(gd)
@@ -160,5 +160,5 @@ all_rows <- mclapply(do_list, function(el) {
 
 df_ <- as.data.frame(do.call(rbind,all_rows))
 names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")
-out_file <- file.path("~/emodi/result_df.Rdata")
+out_file <- file.path("~/emodi/result_df_200_samples_longer_run.Rdata")
 save(df_, file = out_file)
