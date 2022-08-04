@@ -141,8 +141,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
 
 
-df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA, 
-                 s2s_s2p=NA, s2s_cv=NA, s2p_cv=NA)
+# df <- data.frame(method=NA, sample=NA, iteration=NA, RMSE=NA, RMSE_val=NA, s2s_s2p=NA, s2s_cv=NA, s2p_cv=NA)
 
 do_list <- list()
 x <- 1
@@ -158,8 +157,6 @@ for (method in list.files(file.path(root_path, "CVresults"))) {
 all_rows <- mclapply(do_list, function(el) {
   geodist_per_sample(el$method, el$smpl, el$iteration)
 }, mc.cores = 20)
-
-# geodist_per_sample("spatial", "regular", 1)
 
 df_ <- as.data.frame(do.call(rbind,all_rows))
 names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")
