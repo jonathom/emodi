@@ -96,7 +96,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
   load(exhaustive_file) # this loads "RMSE"
   RMSE_val <- RMSE
-
+  print(result_file)
   if (!file.exists(result_file)) next
 
   load(result_file) # this loads and overwrites RMSE
@@ -167,7 +167,7 @@ for (method in list.files(file.path(root_path, "CVresults"))) {
   }
 }
 
-geodist_per_sample("clusterStrong", "simpleRandom", 1)
+geodist_per_sample("spatial", "clusterStrong", 1)
 
 all_rows <- mclapply(do_list, function(el) {
   geodist_per_sample(el$method, el$smpl, el$iteration)
