@@ -74,6 +74,7 @@ norm_gd <- function(geodist, samples) {
   dist3 <- dist3[sample(nrow(dist3), samples),]
   df <- rbind(dist1, dist2, dist3)
   geodist$distances <- df
+  return(geodist)
 }
 
 root_path <- "~/emodi"
@@ -149,6 +150,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
   res <- c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
   fname <- paste0(method,"_",smpl,"_",iteration,".Rdata")
   save(res, file=paste0("~/emodi/CVresults/gd/", fname))
+  # save(res, file=paste0("~/iloek_job/wadoux/emodi/CVresults/gd/", fname))
   return(c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv))
 }
 
