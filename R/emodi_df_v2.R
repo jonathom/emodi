@@ -97,7 +97,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
   load(exhaustive_file) # this loads "RMSE"
   RMSE_val <- RMSE
-  print(result_file)
+  print(paste0("result_file: ", result_file))
   if (!file.exists(result_file)) next
 
   load(result_file) # this loads and overwrites RMSE
@@ -136,7 +136,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
       flds_i <- list("idx_train" = idx_train, "idx_test" = idx_test)
     }
     gd <- sampled_geodist(x = pts_sf, modeldomain = mask, cvfolds = flds_i,
-                          stat='density', samples = 200, showPlot = FALSE, cv_method = method)
+                          stat='density', samples = 150, showPlot = FALSE, cv_method = method)
     gd <- norm_gd(gd, 50)
     s2s_s2p[i] <- EMD_s2s_s2p(gd)
     s2s_cv[i] <- EMD_s2s_cv(gd)
@@ -147,9 +147,9 @@ geodist_per_sample <- function(method, smpl, iteration) {
   s2s_cv <- mean(s2s_cv)
   s2p_cv <- mean(s2p_cv)
 
-  res <- c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
+  current_row <- c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
   fname <- paste0(method,"_",smpl,"_",iteration,".Rdata")
-  save(res, file=paste0("~/emodi/CVresults/gd/", fname))
+  save(current_row, gd, file=paste0("~/emodi/CVresults/gd/", fname))
   # save(res, file=paste0("~/iloek_job/wadoux/emodi/CVresults/gd/", fname))
   return(c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv))
 }
@@ -160,7 +160,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
 do_list <- list()
 x <- 1
-for (method in list.files(file.path(root_path, "CVresults"))) {
+for (method in c("random", "spatial", "nndm")) {
   for (smpl in samples) {
     for (iteration in 1:100) {
       do_list[[x]] <- list("method" = method, "smpl" = smpl, "iteration" = iteration)
@@ -169,11 +169,11 @@ for (method in list.files(file.path(root_path, "CVresults"))) {
   }
 }
 
-geodist_per_sample("spatial", "clusterStrong", 1)
+# geodist_per_sample("spatial", "clusterGapped", 1)
 
 all_rows <- mclapply(do_list, function(el) {
   geodist_per_sample(el$method, el$smpl, el$iteration)
-}, mc.cores = 2)
+}, mc.cores=20)
 
 df_ <- as.data.frame(do.call(rbind,all_rows))
 names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")

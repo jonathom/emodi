@@ -4,13 +4,13 @@
 #SBATCH --nodes=1
 
 # set the number of CPU cores per node
-#SBATCH --ntasks-per-node 2
+#SBATCH --ntasks-per-node 20
 
 # How much memory is needed (per node)
 #SBATCH --mem=140GB
 
 # set a partition
-#SBATCH --partition express
+#SBATCH --partition normal
 
 # set max wallclock time
 #SBATCH --time=01:00:00
