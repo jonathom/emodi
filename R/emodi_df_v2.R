@@ -67,11 +67,11 @@ EMD_s2p_cv <- function(geodist) {
 norm_gd <- function(geodist, samples) {
   df <- geodist$distances
   dist1 <- df[df$what=="sample-to-sample",]
-  dist1 <- dist1[sample[nrow(dist1), samples],]
+  dist1 <- dist1[sample(nrow(dist1), samples),]
   dist2 <- df[df$what=="sample-to-prediction",]
-  dist2 <- dist2[sample[nrow(dist2), samples],]
+  dist2 <- dist2[sample(nrow(dist2), samples),]
   dist3 <- df[df$what=="CV-distances",]
-  dist3 <- dist3[sample[nrow(dist3), samples],]
+  dist3 <- dist3[sample(nrow(dist3), samples),]
   df <- rbind(dist1, dist2, dist3)
   geodist$distances <- df
 }
