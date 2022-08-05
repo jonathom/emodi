@@ -13,7 +13,7 @@
 #SBATCH --partition normal
 
 # set max wallclock time
-#SBATCH --time=200:00:00
+#SBATCH --time=140:00:00
 
 # set name of job
 #SBATCH --job-name=compile_results200
