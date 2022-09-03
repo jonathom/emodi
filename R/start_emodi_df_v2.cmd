@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 
 # set the number of CPU cores per node
-#SBATCH --ntasks-per-node 20
+#SBATCH --ntasks-per-node 2
 
 # How much memory is needed (per node)
 #SBATCH --mem=140GB
@@ -13,7 +13,7 @@
 #SBATCH --partition normal
 
 # set max wallclock time
-#SBATCH --time=01:00:00
+#SBATCH --time=140:00:00
 
 # set name of job
 #SBATCH --job-name=v2_test

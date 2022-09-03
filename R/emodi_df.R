@@ -11,7 +11,7 @@ sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, cv_method=TRU
   row_numbers <- sample(1:nrow(x), samples)
   row_numbers <- sort(row_numbers)
   if (!("ID" %in% names(x))) {x$ID <- 1:nrow(x)}
-  
+
   sampled_x <- x[row_numbers,]
   sampled_modeldomain <- st_sample(st_as_sf(modeldomain), samples)
   sampled_modeldomain <- st_transform(sampled_modeldomain, st_crs(x))
@@ -19,7 +19,7 @@ sampled_geodist <- function(x, modeldomain, samples, cvfolds = NA, cv_method=TRU
     # this works because row_numbers is ordered
     l <- data.frame(row.names = 1:700)
     l[row_numbers,1] <- 1:10
-    
+
     if(cv_method == "random" | cv_method == "spatial") {
       sampled_cvfolds <- lapply(cvfolds, function(x) {
         x <- l[x[x %in% row_numbers],]
@@ -74,25 +74,25 @@ samples <- list.files(samples_root)
 
 geodist_per_sample <- function(method, smpl, iteration) {
   print(paste(method, smpl, iteration, "starting"))
-  
+
   filename <- paste0("AGB_", smpl, sprintf("%03d", iteration), ".Rdata")
   coordsname <- paste0(sprintf("%03d", iteration), "_coords.Rdata")
   result_file <- file.path(root_path, "CVresults", method, filename)
   coords_file <- file.path(samples_root, smpl, coordsname)
   exhaustive_file <- file.path(results_root, "exhaustive", filename)
   sample_file <- file.path(samples_root, smpl, paste0("AGBdata", sprintf("%03d", iteration), ".Rdata"))
-  
+
   load(exhaustive_file) # this loads "RMSE"
   RMSE_val <- RMSE
-  
+
   if (!file.exists(result_file)) next
-  
+
   load(result_file) # this loads and overwrites RMSE
   if(length(RMSE) > 1) {RMSE <- mean(RMSE)}
-  
+
   # df <- rbind(df, c(method, smpl, iteration, RMSE, RMSE_val, 0, 0, 0))
   # next
-  
+
   load(coords_file)
   if(class(pts)[1] != "sf") {
     pts_df <- as.data.frame(pts)
@@ -102,11 +102,11 @@ geodist_per_sample <- function(method, smpl, iteration) {
     pts_sf <- pts
   }
   mask <- st_transform(st_as_sf(mask), st_crs(pts_sf))
-  
+
   s2s_s2p <- numeric(3)
   s2s_cv <- numeric(3)
   s2p_cv <- numeric(3)
-  
+
   for (i in 1:3) {
     if (method == "spatial") {
       fold_index <- i*2 - 1
@@ -122,17 +122,17 @@ geodist_per_sample <- function(method, smpl, iteration) {
       idx_test <- folds[fold_index + 1][[1]]
       flds_i <- list("idx_train" = idx_train, "idx_test" = idx_test)
     }
-    gd <- sampled_geodist(x = pts_sf, modeldomain = mask, cvfolds = flds_i, 
+    gd <- sampled_geodist(x = pts_sf, modeldomain = mask, cvfolds = flds_i,
                           stat='density', samples = 200, showPlot = FALSE, cv_method = method)
     s2s_s2p[i] <- EMD_s2s_s2p(gd)
     s2s_cv[i] <- EMD_s2s_cv(gd)
     s2p_cv[i] <- EMD_s2p_cv(gd)
-    
+
   }
   s2s_s2p <- mean(s2s_s2p)
   s2s_cv <- mean(s2s_cv)
   s2p_cv <- mean(s2p_cv)
-  
+
   res <- c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
   fname <- paste0(method,"_",smpl,"_",iteration,".Rdata")
   save(res, file=paste0("~/emodi/CVresults/gd/", fname))
@@ -145,7 +145,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
 do_list <- list()
 x <- 1
-for (method in list.files(file.path(root_path, "CVresults"))) {
+for (method in list.files(file.path(root_path, "CVresults2"))) {
   for (smpl in samples) {
     for (iteration in 1:100) {
       do_list[[x]] <- list("method" = method, "smpl" = smpl, "iteration" = iteration)
@@ -160,5 +160,5 @@ all_rows <- mclapply(do_list, function(el) {
 
 df_ <- as.data.frame(do.call(rbind,all_rows))
 names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")
-out_file <- file.path("~/emodi/result_df_200_samples_longer_run.Rdata")
+out_file <- file.path("~/emodi/result_df_200_samples_longer_run_cast_nndm.Rdata")
 save(df_, file = out_file)
