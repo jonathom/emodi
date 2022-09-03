@@ -90,7 +90,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
   filename <- paste0("AGB_", smpl, sprintf("%03d", iteration), ".Rdata")
   coordsname <- paste0(sprintf("%03d", iteration), "_coords.Rdata")
-  result_file <- file.path(root_path, "CVresults", method, filename)
+  result_file <- file.path(root_path, "CVresults2", method, filename)
   coords_file <- file.path(samples_root, smpl, coordsname)
   exhaustive_file <- file.path(results_root, "exhaustive", filename)
   sample_file <- file.path(samples_root, smpl, paste0("AGBdata", sprintf("%03d", iteration), ".Rdata"))
@@ -149,7 +149,7 @@ geodist_per_sample <- function(method, smpl, iteration) {
 
   current_row <- c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv)
   fname <- paste0(method,"_",smpl,"_",iteration,".Rdata")
-  save(current_row, gd, file=paste0("~/emodi/CVresults/gd/", fname))
+  save(current_row, gd, file=paste0("~/emodi/CVresults2/gd/", fname))
   # save(res, file=paste0("~/iloek_job/wadoux/emodi/CVresults/gd/", fname))
   return(c(method, smpl, iteration, RMSE, RMSE_val, s2s_s2p, s2s_cv, s2p_cv))
 }
@@ -177,5 +177,5 @@ all_rows <- mclapply(do_list, function(el) {
 
 df_ <- as.data.frame(do.call(rbind,all_rows))
 names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")
-out_file <- file.path("~/emodi/result_df_200_samples_longer_run.Rdata")
+out_file <- file.path("~/emodi/result_df_150_samples_longer_run_nndm_cast.Rdata")
 save(df_, file = out_file)
