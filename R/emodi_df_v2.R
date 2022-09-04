@@ -169,11 +169,11 @@ for (method in c("random", "spatial", "nndm")) {
   }
 }
 
-# geodist_per_sample("spatial", "clusterGapped", 1)
+geodist_per_sample("spatial", "clusterGapped", 1)
 
 all_rows <- mclapply(do_list, function(el) {
   geodist_per_sample(el$method, el$smpl, el$iteration)
-}, mc.cores=20)
+}, mc.cores = 2)
 
 df_ <- as.data.frame(do.call(rbind,all_rows))
 names(df_) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")

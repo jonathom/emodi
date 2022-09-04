@@ -2,3 +2,4 @@
 The following have been reloaded with a version change:
   1) palma/2019a => palma/2020b
 
+slurmstepd: error: *** JOB 12395673 ON r07n03 CANCELLED AT 2022-09-04T00:27:55 ***
