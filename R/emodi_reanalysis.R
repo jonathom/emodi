@@ -176,9 +176,9 @@ for (method in c("nndm", "spatial", "random")) {
   }
 }
 
-all_rows <- lapply(do_list, function(el) {
+all_rows <- mclapply(do_list, function(el) {
   geodist_per_sample(el$method, el$smpl, el$iteration)
-})
+}, mc.cores=20)
 
 df_palma <- as.data.frame(do.call(rbind,all_rows))
 names(df_palma) <- c("method", "sample", "iteration", "RMSE", "RMSE_val", "s2s_s2p", "s2s_cv", "s2p_cv")
